@@ -1,0 +1,144 @@
+---
+apiVersion: containerinsights.eks.com/v1
+kind: K8sMetricAlarm
+metadata:
+  namespace: java
+  name: http-request-rate
+spec:
+  minReplicas: 4
+  maxReplicas: 10
+  deployment: recommender-app
+  scaleUpBehavior:
+    policies:
+      - type: Pods
+        value: 2
+      - type: Percent
+        value: 50
+  scaleDownBehavior:
+    policies:
+      - type: Pods
+        value: 1
+      - type: Percent
+        value: 25
+  scaleUpAlarmConfig: |-
+    {
+        "AlarmName":"HTTP-Request-Rate-High-Alarm",
+        "AlarmDescription":"Alarm triggered when the rate of HTTP requests exceeds 10 requests/second",
+        "ActionsEnabled": true,
+        "OKActions": [],
+        "AlarmActions": [
+            "arn:aws:sns:us-east-1:937351930975:CloudWatchAlarmTopic"
+        ],
+        "InsufficientDataActions": [],
+        "EvaluationPeriods":5,
+        "DatapointsToAlarm":2,
+        "Threshold":10,
+        "ComparisonOperator":"GreaterThanOrEqualToThreshold",
+        "Metrics": [
+            {
+                "Id": "m1",
+                "Label": "sum_http_requests_total_1m",
+                "ReturnData": false,
+                "MetricStat": {
+                    "Metric": {
+                        "Namespace": "ContainerInsights/Prometheus",
+                        "MetricName": "http_requests_total",
+                        "Dimensions": [
+                            {
+                                "Name": "ClusterName",
+                                "Value": "k8s-sarathy-cluster"
+                            },
+                            {
+                                "Name": "EKS_Namespace",
+                                "Value": "java"
+                            },
+                            {
+                                "Name": "EKS_Deployment",
+                                "Value": "recommender-app"
+                            }                            
+                        ]
+                    },
+                    "Period": 60,
+                    "Stat": "Sum"
+                }
+            },
+            {
+                "Id": "m2",
+                "Expression": "m1/60",
+                "Label": "rate_http_requests_total_1m",
+                "ReturnData": true,
+                "Period": 60
+            }        
+        ],
+        "Tags": [
+            {
+                "Key": "kubernetes-name",
+                "Value": "http-request-rate"
+            },
+            {
+                "Key": "kubernetes-namespace",
+                "Value": "java"
+            }        
+        ]        
+     }      
+  scaleDownAlarmConfig: |-
+    {
+        "AlarmName":"HTTP-Request-Rate-Low-Alarm",
+        "AlarmDescription":"Alarm triggered when the rate of HTTP requests falls below 10 requests/second",
+        "ActionsEnabled": true,
+        "OKActions": [],
+        "AlarmActions": [
+            "arn:aws:sns:us-east-1:937351930975:CloudWatchAlarmTopic"
+        ],
+        "InsufficientDataActions": [],
+        "EvaluationPeriods":5,
+        "DatapointsToAlarm":2,
+        "Threshold":5,
+        "ComparisonOperator":"LessThanOrEqualToThreshold",
+        "Metrics": [
+            {
+                "Id": "m1",
+                "Label": "sum_http_requests_total_1m",
+                "ReturnData": false,
+                "MetricStat": {
+                    "Metric": {
+                        "Namespace": "ContainerInsights/Prometheus",
+                        "MetricName": "http_requests_total",
+                        "Dimensions": [
+                            {
+                                "Name": "ClusterName",
+                                "Value": "k8s-sarathy-cluster"
+                            },
+                            {
+                                "Name": "EKS_Namespace",
+                                "Value": "java"
+                            },
+                            {
+                                "Name": "EKS_Deployment",
+                                "Value": "recommender-app"
+                            }                            
+                        ]
+                    },
+                    "Period": 60,
+                    "Stat": "Sum"
+                }
+            },
+            {
+                "Id": "m2",
+                "Expression": "m1/60",
+                "Label": "rate_http_requests_total_1m",
+                "ReturnData": true,
+                "Period": 60
+            }        
+        ],
+        "Tags": [
+            {
+                "Key": "kubernetes-name",
+                "Value": "http-request-rate"
+            },
+            {
+                "Key": "kubernetes-namespace",
+                "Value": "java"
+            }        
+        ]        
+     }      
