@@ -32,21 +32,17 @@ Update the JSON file <b>functionDefinition.json</b> specifying appropriate value
 Deploy the Lambda function with the following command:
 <b>aws lambda create-function --cli-input-json file://functionDefinition.json</b>
 
-## Setup EventBridge Rule to Trigger Lambda Function
+## Setup SNS topic subscription for the Lambda Function
 
-Run the following set of commands to create an EventBridge rule that matches IAM event notifications and add the Lambda function as its target.
+Run the following command to subscriot the Lambda function to the SNS topic that receives notifications when a CloudWatch alarm is triggered.
 
 <code>
-  
-EVENT_RULE_ARN=$(aws events put-rule --name IAMUserGroupRule --event-pattern "{\"source\":[\"aws.iam\"]}" --query RuleArn --output text)
+aws sns subscribe \
+--topic-arn arn:aws:sns:us-east-1:937351930975:CloudWatchAlarmTopic \
+--protocol lambda \
+--notification-endpoint arn:aws:lambda:us-east-1:937351930975:function:CloudWatchAlarmHandler
 
-aws lambda add-permission \
---function-name K8sClientForIAMEvents \
---statement-id 'd6f44629-efc0-4f38-96db-d75ba7d06579' \
---action 'lambda:InvokeFunction' \
---principal events.amazonaws.com \
---source-arn $EVENT_RULE_ARN
-
-aws events put-targets --rule IAMUserGroupRule --targets file://lambdaTarget.json
-
+aws sns publish --message file://scaleUp.json \
+--subject ScaleupTest \
+--topic-arn arn:aws:sns:us-east-1:937351930975:CloudWatchAlarmTopic
 </code>
