@@ -14,12 +14,14 @@ A Lambda function that is triggered to execute when CloudWatch alarm sends notif
 
 To build the JAR file, type <b>mvn clean</b> followed by <b>mvn package</b> at the command line. Upload the JAR file to an S3 bucket.
 
-Update the JSON file <b>createFunction.json</b> specifying appropriate values for the following fields:
+Update the JSON file <b>functionDefinition.json</b> specifying appropriate values for the following fields:
 
 <ul>
   <li><b>Role</b>: Execution role for the Lambda function</li>
   <li><b>Code.S3Bucket</b>: S3 bucket where the JAR file from the above build has been uploaded.
-  <li><b>Environment.Variables.ASSUMED_ROLE</b>: IAM role that is mapped to a Kubernetes group in the EKS cluster which has permissions to manage <i>IamUserGroup</i> custom resources in the <i>kube-system</i> namespace.</li>
+  <li><b>Environment.Variables.REGION</b> AWS Region where your cluster resides</li>
+  <li><b>Environment.Variables.STS_ENDPOINT</b>AWS Region specific endpoint for AWS Security Token Service</li>
+  <li><b>Environment.Variables.ASSUMED_ROLE</b>: IAM role that is mapped to a Kubernetes group in the EKS cluster which has permissions to manage <i>K8sMetricsAlarm</i> custom resources</li>
   <li><b>Environment.Variables.ACCESS_KEY_ID</b></li>
   <li><b>Environment.Variables.SECRET_ACCESS_KEY</b>: Credentials of IAM user that has permissions to assume the above IAM role</li>
   <li><b>Environment.Variables.CLUSTER_NAME</b>: Amazon EKS cluster name</li>
