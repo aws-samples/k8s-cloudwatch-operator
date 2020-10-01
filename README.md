@@ -28,18 +28,7 @@ One or more microservices deployed to the cluster that are the target of autosca
 </li>
 </ul>
 
-
-The architecture used to implement this automation of integration between Kubernetes RBAC and IAM comprises the following key elements.
-
-<ul>
-<li>An Operator implemented using Kubernetes Java SDK. This operator packages a custom resource named IamUserGroup defined by a CustomResourceDefinition, a custom controller implemented as a Deployment, which responds to events in the Kubernetes cluster pertaining to add/update/delete actions on the IamUserGroup custom resource, Role/RoleBinding resources that allow the custom controller to make changes to the aws-auth ConfigMap.</li>
-<li>
-A Kubernetes Java client implemented as an AWS Lambda function whose execution is triggered whenever an IAM user is added or removed from an IAM group. This is made possible using Amazon EventBridge, which is a serverless event bus service that makes it easy to deliver a stream of real-time data from the IAM service and route that data to targets such as AWS Lambda.</li>
-<li>Role/RoleBinding resources that control the access granted to Kubernetes Subjects that an IAM group is mapped to.
-</li>
-</ul>
-
-<img class="wp-image-1960 size-full" src="images/K8sOperator.png" alt="Kubernetes RBAC and IAM integration with a custom controller" width="854" height="527" />
+<img class="wp-image-1960 size-full" src="images/Architecture.png" alt="Autoscaling architecture" width="854" height="527" />
 
 ## Installation Instructions
 
