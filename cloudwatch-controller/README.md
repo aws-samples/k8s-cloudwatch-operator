@@ -1,4 +1,4 @@
-## Kubernetes Operator to manage CloudWatch metric alarms
+## Custom Kubernetes controller for managing CloudWatch alarms
 
 Kubernetes Operator implemented using <a href="https://github.com/kubernetes-client/java">Kubernetes Java SDK</a>. This operator packages a custom resource named **K8sMetricAlarm** defined by a CustomResourceDefinition, a custom controller implemented as a Deployment, which responds to events in the Kubernetes cluster pertaining to add/update/delete actions on the K8sMetricAlarm custom resource, and Role/RoleBinding resources to grant necessary permissions to the custom controller. The customer controller runs under the identity of a Kubernetes service account which is associated with an IAM role that has permissions to manages resources in CloudWatch
 
