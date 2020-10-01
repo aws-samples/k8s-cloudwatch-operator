@@ -1,4 +1,4 @@
-## Autoscaling Kubernetes services based on custom Prometheus metrics using CloudWatch Container Insights
+## Autoscaling Kubernetes deployments based on custom Prometheus metrics using CloudWatch Container Insights
 
 This Git repository contains software artifacts that enable autoscaling microservices deployed to an Amazon EKS cluster or a self-managed Kubernetes cluster on AWS, based on custom Prometheus metrics collected from the workloads. It has a custom Kubernetes controller to manage Amazon CloudWatch metric alarms that watch custom metrics data and trigger scaling actions. AWS Lambda is used to autoscale the microservices.
 
@@ -32,9 +32,9 @@ One or more microservices deployed to the cluster that are the target of autosca
 
 ## Installation Instructions
 
-First, build the Docker image for the custom controller per instructions <a href="https://github.com/aws-samples/k8s-rbac-iam-java-operator/blob/master/java-operator">here</a>.
+First, build the Docker image for the custom controller per instructions <a href="https://github.com/aws-samples/k8s-cloudwatch-operator/blob/main/cloudwatch-controller/README.md">here</a>.
 
-Next, build and deploy the Lambda Kubernetes client per the instructions <a href="https://github.com/aws-samples/k8s-rbac-iam-java-operator/tree/master/lambda-client">here</a>.
+Next, build and deploy the Lambda Kubernetes client per the instructions <a href="https://github.com/aws-samples/k8s-cloudwatch-operator/blob/main/cloudwatch-lambda/README.md">here</a>.
 
 Then, deploy the Kubernetes operator to an Amazon EKS cluster as follows:<br/>
 <b>kubectl apply -f operator.yaml</b>
