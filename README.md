@@ -12,7 +12,7 @@ The architecture used to implement this autoscaling solution comprises the follo
 A Kubernetes Operator implemented using Kubernetes Java SDK. This operator packages a custom resource named <i>K8sMetricAlarm</i> defined by a CustomResourceDefinition, a custom controller implemented as a Deployment, which responds to events in the Kubernetes cluster pertaining to add/update/delete actions on the K8sMetricAlarm custom resource, and Role/RoleBinding resources to grant necessary permissions to the custom controller. The customer controller runs under the identity of a Kubernetes service account which is associated with an IAM role that has permissions to manages resources in CloudWatch.
 </li>
 <li>
-CloudWatch agent for Prometheus metrics collection which is installed as a Deployment with a single replica in the Amazon EKS cluster.
+<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-Setup.html">CloudWatch agent for Prometheus</a> metrics collection which is installed as a Deployment with a single replica in the Amazon EKS cluster.
 </li>
 <li>
 Amazon CloudWatch metric alarms which are managed by the custom controller in conjunction with the K8sMetricAlarm custom resource.
