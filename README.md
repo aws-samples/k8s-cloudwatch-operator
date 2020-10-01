@@ -30,7 +30,7 @@ One or more microservices deployed to the cluster that are the target of autosca
 
 <img class="wp-image-1960 size-full" src="images/Architecture.png" alt="Autoscaling architecture" width="854" height="527" />
 
-## Installation Instructions
+## Build & Installation Instructions
 
 First, build the Docker image for the custom controller per instructions <a href="https://github.com/aws-samples/k8s-cloudwatch-operator/blob/main/cloudwatch-controller/README.md">here</a>.
 
