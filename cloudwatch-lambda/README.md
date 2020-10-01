@@ -1,6 +1,6 @@
-## Kubernetes client using AWS Lambda
+## Autoscaling Kubernetes deployments with AWS Lambda
 
-A Kubernetes Java client implemented as an AWS Lambda function whose execution is triggered whenever an IAM user is added or removed from an IAM group. This is made possible using Amazon EventBridge, which is a serverless event bus service that makes it easy to deliver a stream of real-time data from the IAM service and route that data to targets such as AWS Lambda.
+A Lambda function that is triggered to execute when CloudWatch alarm sends notifications to the SNS topic. It performs the role of a Kubernetes client and executes autoscaling operations by invoking the Kubernetes API server. It authenticates with the API server using a token generated with the <a href="https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-authenticating-requests.html">AWS Signature Version 4</a>  algorithm, adopting the same scheme used by the <a href="https://github.com/kubernetes-sigs/aws-iam-authenticator">AWS IAM Authenticator for Kubernetes</a> to construct the authentication token. 
 
 ## Build Requirements
 
