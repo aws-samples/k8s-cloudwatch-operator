@@ -1,6 +1,6 @@
-## Java-based Custom Controller
+## Kubernetes Custom Controller
 
-The Kubernetes operator is implemented using <a href="https://github.com/kubernetes-client/java">Kubernetes Java SDK</a>. This operator packages a custom resource named <b>IamUserGroup</b> defined by a CustomResourceDefinition, a custom controller implemented as a Deployment, which responds to events in the Kubernetes cluster pertaining to add/update/delete actions on the IamUserGroup custom resource, Role/RoleBinding resources that allow the custom controller to make changes to the <b>aws-auth</b> ConfigMap.
+The Kubernetes operator is implemented using <a href="https://github.com/kubernetes-client/java">Kubernetes Java SDK</a>. This operator packages a custom resource named <b>K8sMetricsAlarm</b> defined by a CustomResourceDefinition, a custom controller implemented as a Deployment, which responds to events in the Kubernetes cluster pertaining to add/update/delete actions on the K8sMetricsAlarm custom resource, Role/RoleBinding resources to grant necessary permissions to the custom controller. The customer controller runs under the identity of a Kubernetes service account which is associated with an IAM role that has permissions to manages resources in CloudWatch.
 
 ## Build Requirements
 
