@@ -19,9 +19,9 @@ Update the JSON file <b>functionDefinition.json</b> specifying appropriate value
 <ul>
   <li><b>Role</b>: Execution role for the Lambda function</li>
   <li><b>Code.S3Bucket</b>: S3 bucket where the JAR file from the above build has been uploaded.
-  <li><b>Environment.Variables.REGION</b> AWS Region where your cluster resides</li>
-  <li><b>Environment.Variables.STS_ENDPOINT</b>AWS Region specific endpoint for AWS Security Token Service</li>
-  <li><b>Environment.Variables.ASSUMED_ROLE</b>: IAM role that is mapped to a Kubernetes group in the EKS cluster which has permissions to manage <i>K8sMetricsAlarm</i> custom resources</li>
+  <li><b>Environment.Variables.REGION</b>: AWS Region where your cluster resides</li>
+  <li><b>Environment.Variables.STS_ENDPOINT</b>: AWS Region specific endpoint for AWS Security Token Service</li>
+  <li><b>Environment.Variables.ASSUMED_ROLE</b>: An IAM role mapped to a Kubernetes group, say, *lambda-client*, in the *mapRoles* section of the *aws-auth* ConfigMap in the Amazon EKS cluster. The Lambda function generates the EKS authentication token using the temporary credentials granted to this IAM role. This IAM role does not need to be attached to any IAM permission policies. A Role and RoleBinding definition in the Amazon EKS cluster that grants the *lambda-client* Kubernetes group permission to list K8sMetricAlarm custom resources as well as list/update Deployment resources.</li>
   <li><b>Environment.Variables.ACCESS_KEY_ID</b></li>
   <li><b>Environment.Variables.SECRET_ACCESS_KEY</b>: Credentials of IAM user that has permissions to assume the above IAM role</li>
   <li><b>Environment.Variables.CLUSTER_NAME</b>: Amazon EKS cluster name</li>
@@ -30,7 +30,7 @@ Update the JSON file <b>functionDefinition.json</b> specifying appropriate value
 </ul>
   
 Deploy the Lambda function with the following command:
-<b>aws lambda create-function --cli-input-json file://createFunction.json</b>
+<b>aws lambda create-function --cli-input-json file://functionDefinition.json</b>
 
 ## Setup EventBridge Rule to Trigger Lambda Function
 
