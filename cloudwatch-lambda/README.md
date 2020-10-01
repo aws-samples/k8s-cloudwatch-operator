@@ -37,12 +37,9 @@ Deploy the Lambda function with the following command:
 Run the following command to subscriot the Lambda function to the SNS topic that receives notifications when a CloudWatch alarm is triggered.
 
 <code>
-aws sns subscribe \
---topic-arn arn:aws:sns:us-east-1:937351930975:CloudWatchAlarmTopic \
---protocol lambda \
---notification-endpoint arn:aws:lambda:us-east-1:937351930975:function:CloudWatchAlarmHandler
+  
+aws sns subscribe --topic-arn SNS_TOPIC_ARN --protocol lambda --notification-endpoint LAMBDA_ARN
 
-aws sns publish --message file://scaleUp.json \
---subject ScaleupTest \
---topic-arn arn:aws:sns:us-east-1:937351930975:CloudWatchAlarmTopic
+aws lambda add-permission --function-name LAMBDA_FUNCTION_NAME --action lambda:InvokeFunction --statement-id sns --principal sns.amazonaws.com
+
 </code>
