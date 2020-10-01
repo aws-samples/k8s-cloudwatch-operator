@@ -39,15 +39,17 @@ Next, build and deploy the Lambda Kubernetes client per the instructions <a href
 Then, deploy the Kubernetes operator to an Amazon EKS cluster as follows:<br/>
 <b>kubectl apply -f operator.yaml</b>
 
-The initial state of <b>aws-auth</b> ConfigMap in the cluster contains the mapping that allows worker nodes to join the Amazon EKS cluster. Modify this ConfigMap applying the YAML manifest <b>aws-auth-configmap.yaml</b>. 
+The initial state of <b>aws-auth</b> ConfigMap in the cluster contains the mapping that allows worker nodes to join the Amazon EKS cluster. Update this ConfigMap using the command <b>kubectl apply -f aws-auth-configmap.yaml</b> after making the following changes.
 <ul>
 <li>Replace WORKER_NODE_ROLE_ARN with the ARN of the IAM role assigned to the worker nodes in the EKS cluster.</li>
-<li> Replce LAMBDA_ROLE_ARN with the ARN of the IAM role mapped to a Kubernetes group in the EKS cluster which has permissions to manage <i>IamUserGroup</i> custom resources in the <i>kube-system</i> namespace.</li>.
+<li>Replace LAMBDA_ROLE_ARN with the ARN of the IAM role that was used in the <b>Environment.Variables.ASSUMED_ROLE</b> configuration parameter for the Lambda function. This role is mapped to a Kubernetes group <i>lambda-client</i>.
 </ul>
 
-Create a Kubernetes Role and RoleBinding as follows:</br>
-<b>kubectl apply -f rbac-lambda-clients.yaml</b>
-This will create a mapping that associates clients with the <b>lambda-clients</b> Kubernetes group if they were authenticated using temporary credentials that belong to the role LAMBDA_ROLE_ARN.
+Create a Kubernetes ClusterRole and ClusterRoleBinding as follows:</br>
+<b>kubectl apply -f rbac-lambda-client.yaml</b>
+
+This will grant the *lambda-client* Kubernetes group permission to list *K8sMetricAlarm* custom resources as well as list/update *Deployment* resources.
+
 
 ## License
 
