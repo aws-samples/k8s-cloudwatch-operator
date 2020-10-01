@@ -17,7 +17,7 @@ To build the JAR file, type <b>mvn clean</b> followed by <b>mvn package</b> at t
 Update the JSON file <b>functionDefinition.json</b> specifying appropriate values for the following fields:
 
 <ul>
-  <li><b>Role</b>: Execution role for the Lambda function</li>
+  <li><b>Role</b>: An IAM role assigned as the Lambda function’s execution role. This role should be granted permissions to list resources in CloudWatch</li>
   <li><b>Code.S3Bucket</b>: S3 bucket where the JAR file from the above build has been uploaded.
   <li><b>Environment.Variables.REGION</b>: AWS Region where your cluster resides</li>
   <li><b>Environment.Variables.STS_ENDPOINT</b>: AWS Region specific endpoint for AWS Security Token Service</li>
