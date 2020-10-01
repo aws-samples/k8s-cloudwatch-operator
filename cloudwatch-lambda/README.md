@@ -34,7 +34,7 @@ Deploy the Lambda function with the following command:
 
 ## Setup SNS topic subscription for the Lambda Function
 
-Run the following command to subscriot the Lambda function to the SNS topic that receives notifications when a CloudWatch alarm is triggered.
+Run the following command to subscribe the Lambda function to the SNS topic that receives notifications when a CloudWatch alarm is triggered.
 
 <code>
   
