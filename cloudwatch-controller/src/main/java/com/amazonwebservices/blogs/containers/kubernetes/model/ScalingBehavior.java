@@ -14,6 +14,27 @@ public class ScalingBehavior {
 	@SerializedName(SERIALIZED_POLICIES)
 	private List<ScalingPolicy> policies;
 	
+	public static final String SERIALIZED_COOLDOWN = "coolDown";
+	@SerializedName(SERIALIZED_COOLDOWN)
+	private long coolDown;
+	
+	//
+	// Cooldown duration
+	//
+	@ApiModelProperty(required = true, value = "Cooldown duration")
+	public long getCoolDown() {
+		return coolDown;
+	}
+
+	public void setCoolDown(long coolDown) {
+		this.coolDown = coolDown;
+	}
+
+	public ScalingBehavior coolDown(long duration) {
+		this.coolDown = duration;
+		return this;
+	}
+	
 	//
 	// Scaling policies
 	//
@@ -43,7 +64,9 @@ public class ScalingBehavior {
 		ScalingBehavior that = (ScalingBehavior) o;
 		Collections.<ScalingPolicy>sort(this.policies);
 		Collections.<ScalingPolicy>sort(that.policies);
-		return Objects.equals(this.policies, that.policies);
+		return Objects.equals(this.policies, that.policies)
+			&& Objects.equals(this.coolDown, that.coolDown);
+
 	}
 	
 	@Override
@@ -56,6 +79,7 @@ public class ScalingBehavior {
 		StringBuilder sb = new StringBuilder();
 		sb.append("class ScalingBehavior {\n");
 		sb.append("    policies: ").append(toIndentedString(policies)).append("\n");
+		sb.append("    coolDown: ").append(toIndentedString(coolDown)).append("\n");
 		sb.append("}");
 		return sb.toString();
 	}

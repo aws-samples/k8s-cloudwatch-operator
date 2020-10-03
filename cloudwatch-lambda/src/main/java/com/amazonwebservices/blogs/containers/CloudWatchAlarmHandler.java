@@ -4,10 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClientBuilder;
@@ -31,6 +36,7 @@ import io.kubernetes.client.extended.generic.GenericKubernetesApi;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.models.V1Deployment;
 import io.kubernetes.client.openapi.models.V1DeploymentList;
+import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.util.CustomClientBuilder;
 import io.vertx.core.json.JsonObject;
 
@@ -45,8 +51,13 @@ public class CloudWatchAlarmHandler implements RequestHandler<SNSEvent, Object> 
 	
 	private final static String AWS_REGION = "us-east-1";
 	
+	private final static String ANNOTATION_ALARM_NAME = "cloudwatch.alarm.name";	
+	private final static String ANNOTATION_ALARM_TRIGGER_REASON = "cloudwatch.alarm.trigger.reason";	
+	private final static String ANNOTATION_ALARM_TRIGGER_TIME = "cloudwatch.alarm.trigger.time";
 
 	final AmazonCloudWatch cloudWatchClient = AmazonCloudWatchClientBuilder.defaultClient();
+
+    final private static DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime();
 
 	private ApiClient apiClient = null;
 	private GenericKubernetesApi<K8sMetricAlarmCustomObject, K8sMetricAlarmCustomObjectList> apiCloudWatchAlarm = null;
@@ -156,11 +167,15 @@ public class CloudWatchAlarmHandler implements RequestHandler<SNSEvent, Object> 
 			//
 			logger.info(String.format("Retrieving Deployment resource '%s.%s'", resoueceNamespace, deploymentName));
 			V1Deployment deployment = apiDeployment.get(resoueceNamespace, deploymentName).getObject();
+			V1ObjectMeta metadata = deployment.getMetadata();
+			boolean isCoolingDown = isResourceCoolingDown (metadata, operator, scaleUpBehavior, scaleDownBehavior);
+			if (isCoolingDown) {
+				logger.info(String.format("Deployment '%s.%s' is still cooling down. Suspending further scaling", deploymentName, resoueceNamespace));
+				return;
+			}
 			int replicas = deployment.getSpec().getReplicas();
 			int scaledReplicas = computeScaling(operator, minReplicas, maxReplicas, replicas, scaleUpBehavior, scaleDownBehavior);
-			deployment.getSpec().replicas(scaledReplicas);
-			apiDeployment.update(deployment);
-			logger.info(String.format("Scaled the number of replicas for Deployment '%s.%s' from %d to %d", resoueceNamespace, deploymentName, replicas, scaledReplicas));
+			updateDeployment (deployment, metadata, replicas, scaledReplicas, alarmName, alarmTriggerReason);
 
 			//
 			// After the scaling activity is completed, set the alarm status to OK
@@ -176,8 +191,52 @@ public class CloudWatchAlarmHandler implements RequestHandler<SNSEvent, Object> 
 		}
 	}
 	
-
 	//
+	// Update the Deployment with the new replica count
+	// Add custom annotations to the metadata that indicate which alarm was breached and when the scaling occurred.
+	//
+	private void updateDeployment (V1Deployment deployment, V1ObjectMeta metadata, int replicas, int scaledReplicas, String alarmName, String alarmTriggerReason) {
+		String alarmTriggerTime = new DateTime().toString(dateTimeFormatter);
+		metadata.getAnnotations().put(ANNOTATION_ALARM_NAME, alarmName);
+		metadata.getAnnotations().put(ANNOTATION_ALARM_TRIGGER_REASON, alarmTriggerReason);
+		metadata.getAnnotations().put(ANNOTATION_ALARM_TRIGGER_TIME, alarmTriggerTime);
+		
+		deployment.metadata(metadata);
+		deployment.getSpec().replicas(scaledReplicas);
+		apiDeployment.update(deployment);
+		logger.info(String.format("Scaled the number of replicas for Deployment '%s.%s' from %d to %d", metadata.getName(), metadata.getNamespace(), replicas, scaledReplicas));
+	}
+	
+	//
+	// Check if the Deployment is still cooling down after the last scaling event
+	// Regardless of the direction of the proposed scaling event, it is suspended if the resource is still cooling down.
+	//
+	private boolean isResourceCoolingDown (V1ObjectMeta metadata, 
+			ComparisonOperator operator, 
+			ScalingBehavior scaleUpBehavior, 
+			ScalingBehavior scaleDownBehavior) {
+		
+		Map<String, String> annotations = metadata.getAnnotations();
+		if (annotations.containsKey(ANNOTATION_ALARM_TRIGGER_TIME)) {
+			ScalingBehavior behavior = null;
+			if (Objects.equals(operator, ComparisonOperator.GreaterThanOrEqualToThreshold) ||
+			    Objects.equals(operator, ComparisonOperator.GreaterThanThreshold)) {
+				behavior = scaleUpBehavior;
+			} else if (Objects.equals(operator, ComparisonOperator.LessThanOrEqualToThreshold) ||
+					   Objects.equals(operator, ComparisonOperator.LessThanThreshold)) {
+				behavior = scaleDownBehavior;
+			}
+			
+		    DateTime currentTime = new DateTime();
+			String dateString = annotations.get(ANNOTATION_ALARM_TRIGGER_TIME);
+			DateTime lastScalingTime = dateTimeFormatter.parseDateTime(dateString);
+			long duration = new Duration (lastScalingTime, currentTime).getStandardSeconds();
+			long coolDownDuration = behavior.getCoolDown();
+			if (duration < coolDownDuration) return true;
+		}
+		return false;
+	}
+	
 	// Compute the number of replicas to be used in the scale up/down operation using the corresponding scaling behavior
 	//
 	private int computeScaling (ComparisonOperator operator, 
