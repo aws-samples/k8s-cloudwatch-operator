@@ -5,7 +5,7 @@ metadata:
   name: lambda-client-role
 rules:
 - apiGroups:
-  - octank.com
+  - containerinsights.eks.com
   resources:
   - cloudwatchalarms
   verbs:

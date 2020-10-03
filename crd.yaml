@@ -32,6 +32,8 @@ spec:
             scaleUpBehavior:
               type: object
               properties:
+                coolDown:
+                  type: integer                
                 policies:
                   type: array
                   items:
@@ -44,6 +46,8 @@ spec:
             scaleDownBehavior:
               type: object
               properties:
+                coolDown:
+                  type: integer
                 policies:
                   type: array
                   items:

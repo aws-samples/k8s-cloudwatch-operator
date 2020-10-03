@@ -40,11 +40,11 @@
 		</dependency>
 
 		<dependency>
-	      <groupId>com.amazonaws</groupId>
-	      <artifactId>aws-java-sdk-cloudwatch</artifactId>
-	      <version>${aws.sdk.version}</version>
-	    </dependency>
-	    
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-cloudwatch</artifactId>
+			<version>${aws.sdk.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>io.kubernetes</groupId>
 			<artifactId>client-java-api</artifactId>
@@ -80,11 +80,17 @@
 			<artifactId>aws-lambda-java-events</artifactId>
 			<version>2.2.7</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>${log4j.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.10.6</version>
 		</dependency>
 	</dependencies>
 
