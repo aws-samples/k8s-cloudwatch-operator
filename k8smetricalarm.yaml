@@ -16,7 +16,7 @@ spec:
       - type: Percent
         value: 50
   scaleDownBehavior:
-    coolDown: 500
+    coolDown: 300
     policies:
       - type: Pods
         value: 1

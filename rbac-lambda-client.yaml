@@ -7,7 +7,7 @@ rules:
 - apiGroups:
   - containerinsights.eks.com
   resources:
-  - cloudwatchalarms
+  - k8smetricalarms
   verbs:
   - '*'
 - apiGroups:
