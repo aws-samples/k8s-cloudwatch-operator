@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.SimpleTimeZone;
 
-import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
@@ -34,7 +33,7 @@ import io.kubernetes.client.util.credentials.Authentication;
 
 public class CustomAuthentication implements Authentication {
 	
-	private static final Logger logger = LogManager.getLogger(CustomAuthentication.class);
+	private static final Logger logger = Logger.getLogger(CustomAuthentication.class);
 
     public static final String ISO8601BasicFormat = "yyyyMMdd'T'HHmmss'Z'";
     public static final String SimpleDateFormat = "yyyyMMdd";
@@ -65,10 +64,10 @@ public class CustomAuthentication implements Authentication {
 			String secretAccessKey = sessionCredentials.getSecretAccessKey();
 			String sessionToken = sessionCredentials.getSessionToken();
 
-			logger.info(String.format("Assumed Role ID = %s", assumeRoleResult.getAssumedRoleUser()));
-			logger.info(String.format("Access Key ID = %s", accessKeyId));
-			logger.info(String.format("Secret Access Key = %s", secretAccessKey));
-			logger.info(String.format("Session Token = %s", sessionToken));
+			logger.debug(String.format("Assumed Role ID = %s", assumeRoleResult.getAssumedRoleUser()));
+			logger.debug(String.format("Access Key ID = %s", accessKeyId));
+			logger.debug(String.format("Secret Access Key = %s", secretAccessKey));
+			logger.debug(String.format("Session Token = %s", sessionToken));
 			
 			Map<String,String> credentialsMap = new HashMap<String,String>();
 			credentialsMap.put("awsAccessKey", accessKeyId);
@@ -95,7 +94,7 @@ public class CustomAuthentication implements Authentication {
         try {
         	urlString = String.format("https://sts.%s.amazonaws.com/", AWSConfig.getRegion());
             endpointUrl = new URL(urlString);
-            logger.info(String.format("Making GET request to %s", urlString));
+            logger.debug(String.format("Making GET request to %s", urlString));
         } 
         catch (MalformedURLException e) {
             throw new RuntimeException("Unable to parse service endpoint: " + e.getMessage());
@@ -147,7 +146,7 @@ public class CustomAuthentication implements Authentication {
         String utf8EncodedSignedUrl = StandardCharsets.UTF_8.decode(base64Buffer).toString();
         utf8EncodedSignedUrl = utf8EncodedSignedUrl.replace("=", "");
         String eksToken = EKSConfig.getEKSTokenPrefix().concat(utf8EncodedSignedUrl);
-        logger.info(String.format("EKS Token =\n%s", eksToken));
+        logger.debug(String.format("EKS Token =\n%s", eksToken));
         return eksToken;
     }
 }

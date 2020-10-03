@@ -169,20 +169,24 @@ public class CloudWatchAlarmHandler implements RequestHandler<SNSEvent, Object> 
 			V1Deployment deployment = apiDeployment.get(resoueceNamespace, deploymentName).getObject();
 			V1ObjectMeta metadata = deployment.getMetadata();
 			boolean isCoolingDown = isResourceCoolingDown (metadata, operator, scaleUpBehavior, scaleDownBehavior);
+			String alarmStateReason;
 			if (isCoolingDown) {
-				logger.info(String.format("Deployment '%s.%s' is still cooling down. Suspending further scaling", deploymentName, resoueceNamespace));
-				return;
+				alarmStateReason = String.format("Deployment '%s.%s' is still cooling down. Suspending further scaling", deploymentName, resoueceNamespace);
+				logger.info(alarmStateReason);
 			}
-			int replicas = deployment.getSpec().getReplicas();
-			int scaledReplicas = computeScaling(operator, minReplicas, maxReplicas, replicas, scaleUpBehavior, scaleDownBehavior);
-			updateDeployment (deployment, metadata, replicas, scaledReplicas, alarmName, alarmTriggerReason);
+			else {
+				int replicas = deployment.getSpec().getReplicas();
+				int scaledReplicas = computeScaling(operator, minReplicas, maxReplicas, replicas, scaleUpBehavior, scaleDownBehavior);
+				updateDeployment(deployment, metadata, replicas, scaledReplicas, alarmName, alarmTriggerReason);
+				alarmStateReason = String.format("Scaled the number of replicas for Deployment '%s.%s' from %d to %d", resoueceNamespace, deploymentName, replicas, scaledReplicas);
+			}
 
 			//
-			// After the scaling activity is completed, set the alarm status to OK
+			// After the scaling activity is completed/suspended, set the alarm status to OK
 			//
 			SetAlarmStateRequest setStateRequest = new SetAlarmStateRequest()
 					.withAlarmName(alarmName)
-					.withStateReason(String.format("Scaled the number of replicas for Deployment '%s.%s' from %d to %d", resoueceNamespace, deploymentName, replicas, scaledReplicas))
+					.withStateReason(alarmStateReason)
 					.withStateValue(StateValue.OK);
 			cloudWatchClient.setAlarmState(setStateRequest);
 			logger.info(String.format("State of alarm '%s' set to %s", alarmName, StateValue.OK.toString()));

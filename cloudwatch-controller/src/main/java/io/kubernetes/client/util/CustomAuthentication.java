@@ -94,7 +94,7 @@ public class CustomAuthentication implements Authentication {
         try {
         	urlString = String.format("https://sts.%s.amazonaws.com/", AWSConfig.getRegion());
             endpointUrl = new URL(urlString);
-            logger.info(String.format("Making GET request to %s", urlString));
+            logger.debug(String.format("Making GET request to %s", urlString));
         } 
         catch (MalformedURLException e) {
             throw new RuntimeException("Unable to parse service endpoint: " + e.getMessage());

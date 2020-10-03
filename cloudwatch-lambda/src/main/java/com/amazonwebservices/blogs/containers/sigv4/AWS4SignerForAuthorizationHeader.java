@@ -83,13 +83,13 @@ public class AWS4SignerForAuthorizationHeader extends AWS4SignerBase {
         		canonicalizedQueryParameters, 
                 canonicalizedHeaderNames,
                 canonicalizedHeaders, bodyHash);
-        logger.info(String.format("CanonicalRequest:\n%s", canonicalRequest));
+        logger.debug(String.format("CanonicalRequest:\n%s", canonicalRequest));
         
         // construct the string to be signed
         String dateStamp = dateStampFormat.format(now);
         String scope =  dateStamp + "/" + regionName + "/" + serviceName + "/" + TERMINATOR;
         String stringToSign = getStringToSign(SCHEME, ALGORITHM, dateTimeStamp, scope, canonicalRequest);
-        logger.info(String.format("StringToSign:\n%s", stringToSign));
+        logger.debug(String.format("StringToSign:\n%s", stringToSign));
         
         // compute the signing key
         byte[] kSecret = (SCHEME + awsSecretKey).getBytes();
@@ -98,7 +98,7 @@ public class AWS4SignerForAuthorizationHeader extends AWS4SignerBase {
         byte[] kService = sign(serviceName, kRegion, "HmacSHA256");
         byte[] kSigning = sign(TERMINATOR, kService, "HmacSHA256");
         byte[] signature = sign(stringToSign, kSigning, "HmacSHA256");
-        logger.info(String.format("Signature:\n%s", BinaryUtils.toHex(signature)));
+        logger.debug(String.format("Signature:\n%s", BinaryUtils.toHex(signature)));
 
         String credentialsAuthorizationHeader = "Credential=" + awsAccessKey + "/" + scope;
         String signedHeadersAuthorizationHeader = "SignedHeaders=" + canonicalizedHeaderNames;
