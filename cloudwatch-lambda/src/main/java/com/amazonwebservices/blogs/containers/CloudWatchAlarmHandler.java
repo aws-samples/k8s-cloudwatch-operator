@@ -8,7 +8,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormatter;
@@ -32,17 +33,17 @@ import com.amazonwebservices.blogs.containers.kubernetes.model.K8sMetricAlarmCus
 import com.amazonwebservices.blogs.containers.kubernetes.model.ScalingBehavior;
 import com.amazonwebservices.blogs.containers.kubernetes.model.ScalingPolicy;
 
-import io.kubernetes.client.extended.generic.GenericKubernetesApi;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.models.V1Deployment;
 import io.kubernetes.client.openapi.models.V1DeploymentList;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.util.CustomClientBuilder;
+import io.kubernetes.client.util.generic.GenericKubernetesApi;
 import io.vertx.core.json.JsonObject;
 
 public class CloudWatchAlarmHandler implements RequestHandler<SNSEvent, Object> {
 	
-	private static final Logger logger = Logger.getLogger(CloudWatchAlarmHandler.class);
+	private static final Logger logger = LogManager.getLogger(CloudWatchAlarmHandler.class);
 	
 	private enum ComparisonOperator {GreaterThanOrEqualToThreshold, GreaterThanThreshold, LessThanOrEqualToThreshold, LessThanThreshold};
 

@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClientBuilder;
@@ -25,7 +25,6 @@ import com.amazonwebservices.blogs.containers.kubernetes.model.K8sMetricAlarmCus
 import io.kubernetes.client.extended.controller.reconciler.Reconciler;
 import io.kubernetes.client.extended.controller.reconciler.Request;
 import io.kubernetes.client.extended.controller.reconciler.Result;
-import io.kubernetes.client.extended.generic.GenericKubernetesApi;
 import io.kubernetes.client.informer.SharedInformer;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.spring.extended.controller.annotation.AddWatchEventFilter;
@@ -35,6 +34,7 @@ import io.kubernetes.client.spring.extended.controller.annotation.KubernetesReco
 import io.kubernetes.client.spring.extended.controller.annotation.KubernetesReconcilerWatch;
 import io.kubernetes.client.spring.extended.controller.annotation.KubernetesReconcilerWatches;
 import io.kubernetes.client.spring.extended.controller.annotation.UpdateWatchEventFilter;
+import io.kubernetes.client.util.generic.GenericKubernetesApi;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 

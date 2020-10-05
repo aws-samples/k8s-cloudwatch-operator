@@ -11,7 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.SimpleTimeZone;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -33,7 +34,7 @@ import io.kubernetes.client.util.credentials.Authentication;
 
 public class CustomAuthentication implements Authentication {
 	
-	private static final Logger logger = Logger.getLogger(CustomAuthentication.class);
+	private static final Logger logger = LogManager.getLogger(CustomAuthentication.class);
 
     public static final String ISO8601BasicFormat = "yyyyMMdd'T'HHmmss'Z'";
     public static final String SimpleDateFormat = "yyyyMMdd";

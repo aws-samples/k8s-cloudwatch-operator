@@ -11,14 +11,14 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 /**
  * Various Http helper routines
  */
 public class HttpUtils {
 
-	private static final Logger logger = Logger.getLogger(HttpUtils.class);
+	private static final Logger logger = LogManager.getLogger(HttpUtils.class);
 
     /**
      * Makes a http request to the specified endpoint

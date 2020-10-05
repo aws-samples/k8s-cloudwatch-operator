@@ -9,14 +9,14 @@ spec:
   maxReplicas: 10
   deployment: recommender-app
   scaleUpBehavior:
-    coolDown: 300
+    coolDown: 150
     policies:
       - type: Pods
         value: 2
       - type: Percent
         value: 50
   scaleDownBehavior:
-    coolDown: 300
+    coolDown: 150
     policies:
       - type: Pods
         value: 1

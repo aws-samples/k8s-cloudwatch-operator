@@ -5,7 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.amazonwebservices.blogs.containers.sigv4.util.BinaryUtils;
 
@@ -15,7 +16,7 @@ import com.amazonwebservices.blogs.containers.sigv4.util.BinaryUtils;
  */
 public class AWS4SignerForAuthorizationHeader extends AWS4SignerBase {
 
-	private static final Logger logger = Logger.getLogger(AWS4SignerForAuthorizationHeader.class);
+	private static final Logger logger = LogManager.getLogger(AWS4SignerForAuthorizationHeader.class);
 
     public AWS4SignerForAuthorizationHeader(URL endpointUrl, String httpMethod,
             String serviceName, String regionName) {

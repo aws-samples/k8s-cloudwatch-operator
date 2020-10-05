@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 
 @ApiModel(description = "K8sMetricAlarmCustomObject represents a resource that should be exposed on the API server")
-public class K8sMetricAlarmCustomObject {
+public class K8sMetricAlarmCustomObject implements io.kubernetes.client.common.KubernetesObject {
   public static final String SERIALIZED_NAME_API_VERSION = "apiVersion";
   @SerializedName(SERIALIZED_NAME_API_VERSION)
   private String apiVersion;

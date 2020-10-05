@@ -1,0 +1,63 @@
+---
+apiVersion: containerinsights.eks.com/v1
+kind: K8sMetricAlarm
+metadata:
+  namespace: java
+  name: sqs-messages-visible
+spec:
+  minReplicas: 4
+  maxReplicas: 10
+  deployment: recommender-app
+  scaleUpBehavior:
+    coolDown: 150
+    policies:
+      - type: Pods
+        value: 3
+      - type: Percent
+        value: 50
+  scaleUpAlarmConfig: |-
+    {
+        "AlarmName":"SQS-Messages-High-Alarm",
+        "AlarmDescription":"Alarm triggered when the approximate number of messages in a SQS queue exceeds 10",
+        "ActionsEnabled": true,
+        "OKActions": [],
+        "AlarmActions": [
+            "arn:aws:sns:us-east-1:937351930975:CloudWatchAlarmTopic"
+        ],
+        "InsufficientDataActions": [],
+        "EvaluationPeriods":5,
+        "DatapointsToAlarm":2,
+        "Threshold":100,
+        "ComparisonOperator":"GreaterThanOrEqualToThreshold",
+        "Metrics": [
+            {
+                "Id": "m1",
+                "Label": "avg_messages_visible",
+                "ReturnData": true,
+                "MetricStat": {
+                    "Metric": {
+                        "Namespace": "AWS/SQS",
+                        "MetricName": "ApproximateNumberOfMessagesVisible",
+                        "Dimensions": [
+                            {
+                                "Name": "QueueName",
+                                "Value": "NodejsTestQueue"
+                            }
+                        ]
+                    },
+                    "Period": 60,
+                    "Stat": "Average"
+                }
+            }
+        ],
+        "Tags": [
+            {
+                "Key": "kubernetes-name",
+                "Value": "sqs-messages-visible"
+            },
+            {
+                "Key": "kubernetes-namespace",
+                "Value": "java"
+            }        
+        ]        
+     }      

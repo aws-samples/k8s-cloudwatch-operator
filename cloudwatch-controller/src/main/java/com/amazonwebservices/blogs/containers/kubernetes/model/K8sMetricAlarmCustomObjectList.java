@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 @ApiModel(description = "K8sMetricAlarmCustomObjectList is a list of K8sMetricAlarmCustomObject objects.")
-public class K8sMetricAlarmCustomObjectList {
+public class K8sMetricAlarmCustomObjectList implements io.kubernetes.client.common.KubernetesListObject {
   public static final String SERIALIZED_NAME_API_VERSION = "apiVersion";
   @SerializedName(SERIALIZED_NAME_API_VERSION)
   private String apiVersion;

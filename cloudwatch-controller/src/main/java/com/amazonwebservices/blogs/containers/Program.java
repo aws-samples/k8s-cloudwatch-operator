@@ -1,10 +1,8 @@
 package com.amazonwebservices.blogs.containers;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Properties;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -16,11 +14,9 @@ import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 
 public class Program {
-	private static final Logger logger = Logger.getLogger(Program.class);
+	private static final Logger logger = LogManager.getLogger(Program.class);
 
 	public static void main(String[] args) {
-		initializeLog4j();
-		
 		//
 		// Instantiating the Spring container using AnnotationConfigApplicationContext
 		// In much the same way that Spring XML files are used as input when instantiating a ClassPathXmlApplicationContext, 
@@ -63,21 +59,5 @@ public class Program {
 		});
 		
 		controllerRunner.run();
-	}
-	
-	private static void initializeLog4j() {
-		try {
-			ClassLoader loader = Program.class.getClassLoader();
-			URL url = loader.getResource("log4j.properties");
-			InputStream urlStream = url.openConnection().getInputStream();
-			Properties log4jProperties = new Properties();
-			log4jProperties.load(urlStream);
-			PropertyConfigurator.configure(log4jProperties);
-			urlStream.close();
-			System.out.println(String.format("Initialized Log4J with %s", url.getFile()));
-		}
-		catch (Exception ex) {
-			System.out.println(String.format("Exception occured while trying to initialize Log4J; %s", ex.getMessage()));
-		}
 	}
 }

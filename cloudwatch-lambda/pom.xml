@@ -12,12 +12,11 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<log4j.version>1.2.17</log4j.version>
 		<java.version>1.8</java.version>
 		<junit.version>4.12</junit.version>
-		<k8s.java.version>8.0.2-SNAPSHOT</k8s.java.version>
+		<k8s.java.version>10.0.0</k8s.java.version>
 		<aws.sdk.version>1.11.739</aws.sdk.version>
-		<vertx.version>3.3.3</vertx.version>
+		<vertx.version>3.7.0</vertx.version>
 	</properties>
 
 	<parent>
@@ -82,15 +81,13 @@
 		</dependency>
 
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>${log4j.version}</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>2.10.6</version>
 		</dependency>
 	</dependencies>
 
