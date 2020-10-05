@@ -152,6 +152,7 @@ public class CloudWatchAlarmHandler implements RequestHandler<SNSEvent, Object> 
 		//
 		logger.info(String.format("Retrieving K8sMetricAlarm custom resource '%s.%s'", resoueceNamespace, resourceName));
 		K8sMetricAlarmCustomObject cloudWatchAlarm = apiCloudWatchAlarm.get(resoueceNamespace, resourceName).getObject();
+		String alarmStateResetReason;
 		if (cloudWatchAlarm != null) {
 			K8sMetricAlarmCustomObjectSpec cloudWatchAlarmSpec = cloudWatchAlarm.getSpec();
 			int minReplicas = cloudWatchAlarmSpec.getMinReplicas();
@@ -162,42 +163,42 @@ public class CloudWatchAlarmHandler implements RequestHandler<SNSEvent, Object> 
 
 			//
 			// Fetch the Deployment resource from the API server
-			// Compute the number of replicas to be scaled up or down
+			// Compute the number of replicas to be scaled up or down based on scaling policies
 			// Update the Deployment resource with the new number of replicas.
 			//
 			logger.info(String.format("Retrieving Deployment resource '%s.%s'", resoueceNamespace, deploymentName));
 			V1Deployment deployment = apiDeployment.get(resoueceNamespace, deploymentName).getObject();
 			V1ObjectMeta metadata = deployment.getMetadata();
 			boolean isCoolingDown = isResourceCoolingDown (metadata, operator, scaleUpBehavior, scaleDownBehavior);
-			String alarmStateReason;
 			if (isCoolingDown) {
-				alarmStateReason = String.format("Deployment '%s.%s' is still cooling down. Suspending further scaling", deploymentName, resoueceNamespace);
-				logger.info(alarmStateReason);
+				alarmStateResetReason = String.format("Deployment '%s.%s' is still cooling down. Suspending further scaling", deploymentName, resoueceNamespace);
+				logger.info(alarmStateResetReason);
 			}
 			else {
 				int replicas = deployment.getSpec().getReplicas();
 				int scaledReplicas = computeScaling(operator, minReplicas, maxReplicas, replicas, scaleUpBehavior, scaleDownBehavior);
 				updateDeployment(deployment, metadata, replicas, scaledReplicas, alarmName, alarmTriggerReason);
-				alarmStateReason = String.format("Scaled the number of replicas for Deployment '%s.%s' from %d to %d", resoueceNamespace, deploymentName, replicas, scaledReplicas);
+				alarmStateResetReason = String.format("Scaled Deployment '%s.%s' from %d to %d replicas", resoueceNamespace, deploymentName, replicas, scaledReplicas);
 			}
-
-			//
-			// After the scaling activity is completed/suspended, set the alarm status to OK
-			//
-			SetAlarmStateRequest setStateRequest = new SetAlarmStateRequest()
-					.withAlarmName(alarmName)
-					.withStateReason(alarmStateReason)
-					.withStateValue(StateValue.OK);
-			cloudWatchClient.setAlarmState(setStateRequest);
-			logger.info(String.format("State of alarm '%s' set to %s", alarmName, StateValue.OK.toString()));
 		} else {
-			logger.error(String.format("Unable to retrieve K8sMetricAlarm custom resource '%s.%s'", resoueceNamespace, resourceName));
+			alarmStateResetReason = String.format("Unable to retrieve K8sMetricAlarm custom resource '%s.%s'", resoueceNamespace, resourceName);
+			logger.error(alarmStateResetReason);
 		}
+		
+		//
+		// After the scaling activity is completed/suspended, set the alarm status to OK
+		//
+		SetAlarmStateRequest setStateRequest = new SetAlarmStateRequest()
+				.withAlarmName(alarmName)
+				.withStateReason(alarmStateResetReason)
+				.withStateValue(StateValue.OK);
+		cloudWatchClient.setAlarmState(setStateRequest);
+		logger.info(String.format("State of alarm '%s' set to %s", alarmName, StateValue.OK.toString()));
 	}
 	
 	//
 	// Update the Deployment with the new replica count
-	// Add custom annotations to the metadata that indicate which alarm was breached and when the scaling occurred.
+	// Add custom annotations to the metadata that indicate which alarm was triggered and when the scaling occurred.
 	//
 	private void updateDeployment (V1Deployment deployment, V1ObjectMeta metadata, int replicas, int scaledReplicas, String alarmName, String alarmTriggerReason) {
 		String alarmTriggerTime = new DateTime().toString(dateTimeFormatter);
@@ -208,12 +209,12 @@ public class CloudWatchAlarmHandler implements RequestHandler<SNSEvent, Object> 
 		deployment.metadata(metadata);
 		deployment.getSpec().replicas(scaledReplicas);
 		apiDeployment.update(deployment);
-		logger.info(String.format("Scaled the number of replicas for Deployment '%s.%s' from %d to %d", metadata.getName(), metadata.getNamespace(), replicas, scaledReplicas));
+		logger.info(String.format("Scaled Deployment '%s.%s' from %d to %d replicas", metadata.getName(), metadata.getNamespace(), replicas, scaledReplicas));
 	}
 	
 	//
 	// Check if the Deployment is still cooling down after the last scaling event
-	// Regardless of the direction of the proposed scaling event, it is suspended if the resource is still cooling down.
+	// Regardless of the direction of the proposed scaling event, it is suspended if the target resource is still cooling down.
 	//
 	private boolean isResourceCoolingDown (V1ObjectMeta metadata, 
 			ComparisonOperator operator, 

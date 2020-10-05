@@ -143,8 +143,8 @@ public class K8sMetricAlarmReconciler implements Reconciler {
 			
 			JsonObject scaleUpAlarmConfigObject = parseCloudWatchAlarmConfig (cloudWatchAlarm.getSpec().getScaleUpAlarmConfig());
 			JsonObject scaleDownAlarmConfigObject = parseCloudWatchAlarmConfig (cloudWatchAlarm.getSpec().getScaleDownAlarmConfig());
-			logger.info(String.format("Scale up alarm configuration:\n %s", scaleUpAlarmConfigObject.encodePrettily()));			
-			logger.info(String.format("Scale down alarm configuration:\n %s", scaleDownAlarmConfigObject.encodePrettily()));
+			if (scaleUpAlarmConfigObject != null) logger.info(String.format("Scale up alarm configuration:\n %s", scaleUpAlarmConfigObject.encodePrettily()));			
+			if (scaleDownAlarmConfigObject != null) logger.info(String.format("Scale down alarm configuration:\n %s", scaleDownAlarmConfigObject.encodePrettily()));
 			
 			if (isAdded) {
 				createCloudWatchAlarm (scaleUpAlarmConfigObject);
@@ -168,18 +168,19 @@ public class K8sMetricAlarmReconciler implements Reconciler {
 	
 	
 	private JsonObject parseCloudWatchAlarmConfig (String config) {
-		JsonObject configObject = new JsonObject(config);
+		JsonObject configObject = config != null ? new JsonObject(config) : null;
 		return configObject;
 	}
 	
 	private void deleteCloudWatchAlarm (JsonObject config) {
+		if (config == null) return;
 		DeleteAlarmsRequest request = new DeleteAlarmsRequest().withAlarmNames(config.getString("AlarmName"));
 		DeleteAlarmsResult response = cloudWatchClient.deleteAlarms(request);
 		logger.info(String.format("Successfully deleted CloudWatch Metric Alarm '%s'", config.getString("AlarmName")));
 	}
 	
 	private void createCloudWatchAlarm (JsonObject config) throws Exception {
-		
+		if (config == null) return;
 		List<Tag> tags = new ArrayList<Tag> ();
 		if (config.containsKey("Tags")) {
 			JsonArray tagsArray = config.getJsonArray("Tags");
