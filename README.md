@@ -59,6 +59,8 @@ Update this ConfigMap as follows:<br/>
 We will have to grant the *lambda-client* Kubernetes group permission to list *K8sMetricAlarm* custom resources as well as list/update *Deployment* resources. In order to do that, create a Kubernetes ClusterRole and ClusterRoleBinding as follows:</br>
 <b>kubectl apply -f rbac-lambda-client.yaml</b>
 
+Sample definitions of the <i>K8sMetricAlarm</i> custom resource are provided in <i>http-rate-alarm.yaml</i> and <i>sqs-alarm.yaml</i>
+
 ## License
 
 This library is licensed under the MIT-0 License. See the LICENSE file.
