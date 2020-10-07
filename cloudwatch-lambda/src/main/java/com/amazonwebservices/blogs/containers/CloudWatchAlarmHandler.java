@@ -113,6 +113,8 @@ public class CloudWatchAlarmHandler implements RequestHandler<SNSEvent, Object> 
 	}
 
 	private void processCloudWatchAlarmMessage (JsonObject alarmMessageObject) {
+		logger.info(alarmMessageObject);
+		
 		String alarmName = alarmMessageObject.getString("AlarmName");
 		String accountID = alarmMessageObject.getString("AWSAccountId");
 		String alarmTriggerReason = alarmMessageObject.getString("NewStateReason");
@@ -151,7 +153,7 @@ public class CloudWatchAlarmHandler implements RequestHandler<SNSEvent, Object> 
 		// Fetch the K8sMetricAlarm custom resource from the API server
 		// The custom resource contains the name of the Deployment resource to be scaled
 		//
-		logger.info(String.format("Retrieving K8sMetricAlarm custom resource '%s.%s'", resoueceNamespace, resourceName));
+		logger.info(String.format("Retrieving K8sMetricAlarm custom resource '%s.%s'", resourceName, resoueceNamespace));
 		K8sMetricAlarmCustomObject cloudWatchAlarm = apiCloudWatchAlarm.get(resoueceNamespace, resourceName).getObject();
 		String alarmStateResetReason;
 		if (cloudWatchAlarm != null) {
@@ -167,7 +169,7 @@ public class CloudWatchAlarmHandler implements RequestHandler<SNSEvent, Object> 
 			// Compute the number of replicas to be scaled up or down based on scaling policies
 			// Update the Deployment resource with the new number of replicas.
 			//
-			logger.info(String.format("Retrieving Deployment resource '%s.%s'", resoueceNamespace, deploymentName));
+			logger.info(String.format("Retrieving Deployment resource '%s.%s'", deploymentName, resoueceNamespace));
 			V1Deployment deployment = apiDeployment.get(resoueceNamespace, deploymentName).getObject();
 			V1ObjectMeta metadata = deployment.getMetadata();
 			boolean isCoolingDown = isResourceCoolingDown (metadata, operator, scaleUpBehavior, scaleDownBehavior);
@@ -204,7 +206,6 @@ public class CloudWatchAlarmHandler implements RequestHandler<SNSEvent, Object> 
 	private void updateDeployment (V1Deployment deployment, V1ObjectMeta metadata, int replicas, int scaledReplicas, String alarmName, String alarmTriggerReason) {
 		String alarmTriggerTime = new DateTime().toString(dateTimeFormatter);
 		metadata.getAnnotations().put(ANNOTATION_ALARM_NAME, alarmName);
-		metadata.getAnnotations().put(ANNOTATION_ALARM_TRIGGER_REASON, alarmTriggerReason);
 		metadata.getAnnotations().put(ANNOTATION_ALARM_TRIGGER_TIME, alarmTriggerTime);
 		
 		deployment.metadata(metadata);

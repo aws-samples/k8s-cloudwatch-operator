@@ -27,7 +27,7 @@ spec:
         "InsufficientDataActions": [],
         "EvaluationPeriods":5,
         "DatapointsToAlarm":2,
-        "Threshold":100,
+        "Threshold":50,
         "ComparisonOperator":"GreaterThanOrEqualToThreshold",
         "Metrics": [
             {
@@ -41,7 +41,7 @@ spec:
                         "Dimensions": [
                             {
                                 "Name": "QueueName",
-                                "Value": "NodejsTestQueue"
+                                "Value": "TestQueue"
                             }
                         ]
                     },
