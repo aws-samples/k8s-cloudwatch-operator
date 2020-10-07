@@ -24,8 +24,8 @@ public class KubernetesConfig {
 
 	@Bean
 	public ApiClient apiClient() throws IOException {
-		ApiClient apiClient = CustomClientBuilder.custom();
-		//ApiClient apiClient = ClientBuilder.cluster().build();
+		//ApiClient apiClient = CustomClientBuilder.custom();
+		ApiClient apiClient = ClientBuilder.cluster().build();
 		return apiClient.setHttpClient(apiClient.getHttpClient().newBuilder().readTimeout(Duration.ZERO).build());
 	}
 

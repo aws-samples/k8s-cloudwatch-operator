@@ -36,7 +36,7 @@ First, build the Docker image for the custom controller per instructions <a href
 
 Next, build and deploy the Lambda Kubernetes client per the instructions <a href="https://github.com/aws-samples/k8s-cloudwatch-operator/blob/main/cloudwatch-lambda">here</a>.
 
-Execute the shell script <b>createIRSA.sh</b>. The script executes the following tasks:
+Execute the shell script <b>createIRSA.sh</b> after defining the variable CLUSTER_NAME with the name of the Kubernetes cluster. The script executes the following tasks:
 <ul>
 <li>Create an IAM role named <b>EKS-CloudWatch-Role</b></li>
 <li>Attach the AWS managed policy named <b>CloudWatchFullAccess</b> to this role</li>
