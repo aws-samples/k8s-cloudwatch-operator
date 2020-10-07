@@ -41,11 +41,10 @@ Execute the shell script <b>createIRSA.sh</b>. The script executes the following
 <li>Create an IAM role named <b>EKS-CloudWatch-Role</b></li>
 <li>Attach the AWS managed policy named <b>CloudWatchFullAccess</b> to this role</li>
 <li>Create a Kubernetes service account <b>cloudwatchalarm-controller</b> in the <b>kube-system</b> namespace and associate it with the above IAM role using a Kubernetes annotation. The custom controller is configured to run under the identity of this service account</li>
-<li></li>
 </ul>
 
-Then, deploy the Kubernetes operator to a Kubernetes cluster as follows:<br/>
-<b>kubectl apply -f operator.yaml</b>
+Then, deploy the operator to a Kubernetes cluster as follows:<br/>
+<b>kubectl apply -f operator.yaml</b><br/>
 The custom controller is deployed with an image from a public repository. You may want to replace it with the image URL from your repository.
 
 Make the following changes to the YAML manifest <b>aws-auth-configmap.yaml</b>
@@ -54,7 +53,7 @@ Make the following changes to the YAML manifest <b>aws-auth-configmap.yaml</b>
 <li>Replace LAMBDA_ROLE_ARN with the ARN of the IAM role that was used in the <b>Environment.Variables.ASSUMED_ROLE</b> configuration parameter for the Lambda function. This role is mapped to a Kubernetes group <i>lambda-client</i>.
 </ul>
 
-The initial state of *aws-auth* ConfigMap in the EKS cluster contains mapping that allows worker nodes to join the cluster. Update this ConfigMap as follows:<br/>
+Update this ConfigMap as follows:<br/>
 <b>kubectl apply -f aws-auth-configmap.yaml</b> 
 
 We will have to grant the *lambda-client* Kubernetes group permission to list *K8sMetricAlarm* custom resources as well as list/update *Deployment* resources. In order to do that, create a Kubernetes ClusterRole and ClusterRoleBinding as follows:</br>
