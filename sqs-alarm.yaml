@@ -22,7 +22,7 @@ spec:
         "ActionsEnabled": true,
         "OKActions": [],
         "AlarmActions": [
-            "arn:aws:sns:us-east-1:937351930975:CloudWatchAlarmTopic"
+            "arn:aws:sns:us-east-1:123456789001:CloudWatchAlarmTopic"
         ],
         "InsufficientDataActions": [],
         "EvaluationPeriods":5,
