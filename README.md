@@ -36,8 +36,17 @@ First, build the Docker image for the custom controller per instructions <a href
 
 Next, build and deploy the Lambda Kubernetes client per the instructions <a href="https://github.com/aws-samples/k8s-cloudwatch-operator/blob/main/cloudwatch-lambda">here</a>.
 
-Then, deploy the Kubernetes operator to an Amazon EKS cluster as follows:<br/>
+Execute the shell script <b>createIRSA.sh</b>. The script executes the following tasks:
+<ul>
+<li>Create an IAM role named <b>EKS-CloudWatch-Role</b></li>
+<li>Attach the AWS managed policy named <b>CloudWatchFullAccess</b> to this role</li>
+<li>Create a Kubernetes service account <b>cloudwatchalarm-controller</b> in the <b>kube-system</b> namespace and associate it with the above IAM role using a Kubernetes annotation. The custom controller is configured to run under the identity of this service account</li>
+<li></li>
+</ul>
+
+Then, deploy the Kubernetes operator to a Kubernetes cluster as follows:<br/>
 <b>kubectl apply -f operator.yaml</b>
+The custom controller is deployed with an image from a public repository. You may want to replace it with the image URL from your repository.
 
 Make the following changes to the YAML manifest <b>aws-auth-configmap.yaml</b>
 <ul>
