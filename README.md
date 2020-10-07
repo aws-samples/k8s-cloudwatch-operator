@@ -32,9 +32,9 @@ One or more microservices deployed to the cluster that are the target of autosca
 
 ## Build & Installation Instructions
 
-First, build the Docker image for the custom controller per instructions <a href="https://github.com/aws-samples/k8s-cloudwatch-operator/blob/main/cloudwatch-controller/README.md">here</a>.
+First, build the Docker image for the custom controller per instructions <a href="https://github.com/aws-samples/k8s-cloudwatch-operator/blob/main/cloudwatch-controller">here</a>.
 
-Next, build and deploy the Lambda Kubernetes client per the instructions <a href="https://github.com/aws-samples/k8s-cloudwatch-operator/blob/main/cloudwatch-lambda/README.md">here</a>.
+Next, build and deploy the Lambda Kubernetes client per the instructions <a href="https://github.com/aws-samples/k8s-cloudwatch-operator/blob/main/cloudwatch-lambda">here</a>.
 
 Then, deploy the Kubernetes operator to an Amazon EKS cluster as follows:<br/>
 <b>kubectl apply -f operator.yaml</b>
