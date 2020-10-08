@@ -2,7 +2,7 @@
 
 This Git repository contains software artifacts that enable autoscaling microservices deployed to an Amazon EKS cluster or a self-managed Kubernetes cluster on AWS, based on custom Prometheus metrics collected from the workloads. It has a custom Kubernetes controller to manage Amazon CloudWatch metric alarms that watch custom metrics data and trigger scaling actions. AWS Lambda is used to autoscale the microservices.
 
-Please refer to this blog post for details about how this works.
+Please refer to related <a href=https://aws.amazon.com/blogs/containers/autoscaling-amazon-eks-services-based-on-custom-prometheus-metrics-using-cloudwatch-container-insights/">blog post</a> for details about how this works.
 
 ## Architecture
 The architecture used to implement this autoscaling solution comprises the following elements.
