@@ -43,8 +43,10 @@ Execute the shell script <b>createIRSA.sh</b> after defining the variable CLUSTE
 <li>Create a Kubernetes service account <b>cloudwatchalarm-controller</b> in the <b>kube-system</b> namespace and associate it with the above IAM role using a Kubernetes annotation. The custom controller is configured to run under the identity of this service account</li>
 </ul>
 
-Then, deploy the operator to a Kubernetes cluster as follows:<br/>
-<b>kubectl apply -f operator.yaml</b><br/>
+Then, deploy the operator to a Kubernetes cluster as follows:
+```bash
+kubectl apply -f operator.yaml
+```
 The custom controller is deployed with an image from a public repository. You may want to replace it with the image URL from your repository.
 
 Make the following changes to the YAML manifest <b>aws-auth-configmap.yaml</b>
