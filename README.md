@@ -53,11 +53,14 @@ Make the following changes to the YAML manifest <b>aws-auth-configmap.yaml</b>
 <li>Replace LAMBDA_ROLE_ARN with the ARN of the IAM role that was used in the <b>Environment.Variables.ASSUMED_ROLE</b> configuration parameter for the Lambda function. This role is mapped to a Kubernetes group <i>lambda-client</i>.
 </ul>
 
-Update this ConfigMap as follows:<br/>
-<b>kubectl apply -f aws-auth-configmap.yaml</b> 
-
-We will have to grant the *lambda-client* Kubernetes group permission to list *K8sMetricAlarm* custom resources as well as list/update *Deployment* resources. In order to do that, create a Kubernetes ClusterRole and ClusterRoleBinding as follows:</br>
-<b>kubectl apply -f rbac-lambda-client.yaml</b>
+Update this ConfigMap as follows:
+```bash
+kubectl apply -f aws-auth-configmap.yaml
+```
+We will have to grant the *lambda-client* Kubernetes group permission to list *K8sMetricAlarm* custom resources as well as list/update *Deployment* resources. In order to do that, create a Kubernetes ClusterRole and ClusterRoleBinding as follows:
+```bash
+kubectl apply -f rbac-lambda-client.yaml
+```
 
 Sample definitions of the <i>K8sMetricAlarm</i> custom resource are provided in <b>http-rate-alarm.yaml</b> and <b>sqs-alarm.yaml</b>
 
