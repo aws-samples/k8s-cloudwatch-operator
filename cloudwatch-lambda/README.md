@@ -30,11 +30,11 @@ Update the JSON file <b>functionDefinition.json</b> specifying appropriate value
 </ul>
   
 Deploy the Lambda function with the following command:
-<code>
+```bash
 
 aws lambda create-function --cli-input-json file://functionDefinition.json
 
-</code>
+```
 
 ## Setup SNS topic subscription for the Lambda Function
 
